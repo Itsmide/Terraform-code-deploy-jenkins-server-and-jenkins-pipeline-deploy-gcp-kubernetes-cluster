@@ -1,0 +1,76 @@
+
+
+{
+    "kind": "ExecCredential",
+    "apiVersion": "client.authentication.k8s.io/v1beta1",
+    "spec": {
+        "interactive": false
+    },
+    "status": {
+        "expirationTimestamp": "2023-03-17T14:11:16Z",
+        "token": "ya29.c.b0Aaekm1KTfaRMEMIMv-ZQ_WyZaEX_FV1fyO_BCw0lz2iJF4yIGNO1ZRCZxxW30iP8DcWOGT86kPHoJsk7ePuzpysgCJ_cMEAcwCcI4sijHN30KiSjoPGlm5YniV5wGincKYInZj1-_fRHoDGmy8qSoH98fHqYUD7JxOyyG3ucJ4EhFZse9CFl2bW_sN2pAIcpnwcUak7sD1HrJv5fbvfdwEqz8ld4Fvf_fpsVHaGfkYeq3LVd2NRHZxp1qe5T8LFJ5zFxwskf_a4S-R3xu-qXVfvKJ56n1o8lVADaOa-OMht4AhvQwXh4LcpWHMyCQoNP2UTdMTLjM937m1IlTCiISd4E352KyXwnB9ifhohvXQJlrXh4dt9Bck0XWzh5Z5xrwcQI5cax1lIh3SMqzaza7p5qQ2tm9ybjOzVReuRFUvrVo8wlZhsdFl0l9Ute1am8IMo_U6MQmbkhJ0On9_6eUkviqd7pjzf0ryXQJ1_zfOQ0lhx66iOlBoz_ocdhXdF9qJg8zzjlxhQIarMxB_ZYbyYr2zZ4tVIB4SqYQcXXtYYxkOh-0VqiQt29t15pRXacWmZnI_fRxWkzwFnxR8meai9r9jVmy3O8vof42iegy66cz3YpZfSV3q8_so1qht9UQXMt4wlxsQbfbes6V6IFgQoy3oYv3ggX1Xm-JzgfYg17FX03btObexqZhhd64VSy22afw7Ma00sWhSvwmhj9iyre4sRY0j2XrnXIZY8ws2f84dyUk3eV9srp12WbcgUtRuwS0Ig84Uw_95Fk1_jqiFXm-dMFWX1ZX_R6UOxz2ev8lafgY2r61_3hX7yrFlZItXUQ8Re9c3QOtQ_0IifWntZXBl0Ynjv_kbQ_or7lprMervXQo_IVbtyB48jBFJ7z6zX0OlWQ6Oltnqvkk9Vi5b0dvh4hsw4hJMn5oy74zevBr59cJyn4vfzh0BY2-g0M9FzM-Z5f9bob-y0izsl1Zd8USmR_8sjeBhv5gejpdMyW_9tb9u67zFF"
+    }
+}
+
+#!/usr/bin/env groovy
+pipeline {
+    agent any
+    environment {
+        GCP_SERVICE_ACCOUNT = credentials('gcp-service-account')
+        PROJECT_ID = credentials('my-gcp-project-id')
+        ZONE = 'us-central1'
+    }
+    stages {
+        stage('Install Google Cloud SDK') {
+            steps {
+                sh 'curl https://sdk.cloud.google.com | bash'
+                sh 'exec -l $SHELL'
+                sh 'gcloud config set disable_usage_reporting false'
+                sh 'gcloud init'
+            }
+        }
+        stage("Install kubectl") {
+            steps {
+                sh """
+                    curl -LO https://dl.k8s.io/release/\$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl
+                    chmod +x kubectl
+                    sudo mv kubectl /var/lib/jenkins/google-cloud-sdk/bin/
+                """
+            }
+        }
+        stage("Create a GCP Cluster") {
+            steps {
+                script {
+                    dir('terraform') {
+                        withCredentials([file(credentialsId: 'gcp-service-account', variable: 'GOOGLE_CREDENTIALS')]) {
+                            sh '/var/lib/jenkins/google-cloud-sdk/bin/gcloud auth activate-service-account --key-file=$GOOGLE_CREDENTIALS'
+                            sh "terraform init"
+                            sh "terraform apply -auto-approve"
+                        }
+                    }
+                }
+            }
+        }
+        stage("Deploy to Cluster") {
+            steps {
+                script {
+                    dir('kubernetes') {
+                        withCredentials([file(credentialsId: 'gcp-service-account', variable: 'GOOGLE_CREDENTIALS')]) {
+                            sh 'export PATH="$PATH:/var/lib/jenkins/google-cloud-sdk/bin/"'  // Add this line to include the gcloud binary directory in PATH
+                            sh '/var/lib/jenkins/google-cloud-sdk/bin/gcloud auth activate-service-account --key-file=$GOOGLE_CREDENTIALS'
+                            sh '/var/lib/jenkins/google-cloud-sdk/bin/gcloud components remove gke-gcloud-auth-plugin'
+                            sh '/var/lib/jenkins/google-cloud-sdk/bin/gcloud components install gke-gcloud-auth-plugin'
+                            sh '/var/lib/jenkins/google-cloud-sdk/bin/gcloud components update'
+                            sh '/var/lib/jenkins/google-cloud-sdk/bin/gcloud container clusters get-credentials itsmidek8s-cluster-prod --zone us-central1 --project orbital-avatar-378601'
+                            sh 'kubectl apply -f nginx-deployment.yaml'
+                            sh 'kubectl apply -f nginx-service.yaml'
+                            sh 'git clone https://github.com/microservices-demo/microservices-demo.git'
+                            sh 'kubectl apply -f microservices-demo/deploy/kubernetes/complete-demo.yaml'
+                            sh 'kubectl apply -f sock-shop.yaml'
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
