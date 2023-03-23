@@ -54,7 +54,6 @@ pipeline {
                             sh 'echo "export USE_GKE_GCLOUD_AUTH_PLUGIN=True" >> ~/.bashrc'
                             sh 'source ~/.bashrc'
                             sh '/var/lib/jenkins/google-cloud-sdk/bin/gcloud components update'
-                            sh '/var/lib/jenkins/google-cloud-sdk/bin/gcloud container clusters get-credentials itsmidek8s-cluster-prod --zone us-central1 --project orbital-avatar-378601'
                         }
                     }
                 }
@@ -67,9 +66,8 @@ pipeline {
                         withCredentials([file(credentialsId: 'gcp-service-account', variable: 'GOOGLE_CREDENTIALS')]) {
                             sh 'export PATH="$PATH:/var/lib/jenkins/google-cloud-sdk/bin/"'
                             sh '/var/lib/jenkins/google-cloud-sdk/bin/gcloud auth activate-service-account --key-file=$GOOGLE_CREDENTIALS'
-                            sh '/var/lib/jenkins/google-cloud-sdk/bin/gcloud components update'
                             sh '/var/lib/jenkins/google-cloud-sdk/bin/" gke-gcloud-auth-plugin --impersonate_service_account string"'
-                            sh '/var/lib/jenkins/google-cloud-sdk/bin/gcloud container clusters get-credentials itsmidek8s-cluster-prod --zone us-central1 --project orbital-avatar-378601'
+                            sh '/var/lib/jenkins/google-cloud-sdk/bin/gcloud container clusters get-credentials itsmidek8s-cluster-prod --region us-central1 --project orbital-avatar-378601'
                             sh '/var/lib/jenkins/google-cloud-sdk/bin/kubectl apply -f nginx-deployment.yaml'
                             sh '/var/lib/jenkins/google-cloud-sdk/bin/kubectl apply -f nginx-service.yaml'
                             sh '/var/lib/jenkins/google-cloud-sdk/bin/git clone https://github.com/microservices-demo/microservices-demo.git'
