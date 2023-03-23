@@ -82,3 +82,9 @@ module "gke" {
     },
   ]
 }
+    
+resource "google_dns_managed_zone" "apps" {
+  name        = "apps"
+  dns_name    = "itsmidealtschoolexamproject.live."
+  description = " "
+}
