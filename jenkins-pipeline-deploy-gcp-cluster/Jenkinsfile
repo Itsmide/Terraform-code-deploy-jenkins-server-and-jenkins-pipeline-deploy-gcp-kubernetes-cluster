@@ -67,13 +67,17 @@ pipeline {
                         withCredentials([file(credentialsId: 'gcp-service-account', variable: 'GOOGLE_CREDENTIALS')]) {
                             sh 'export PATH="$PATH:/var/lib/jenkins/google-cloud-sdk/bin/"'
                             sh '/var/lib/jenkins/google-cloud-sdk/bin/gcloud auth activate-service-account --key-file=$GOOGLE_CREDENTIALS'
-                            sh '/var/lib/jenkins/google-cloud-sdk/bin/" gke-gcloud-auth-plugin --use_application_default_credentials"'
                             sh '/var/lib/jenkins/google-cloud-sdk/bin/gcloud components update'
+                            sh '/var/lib/jenkins/google-cloud-sdk/bin/" gke-gcloud-auth-plugin --impersonate_service_account string"'
+                            sh '/var/lib/jenkins/google-cloud-sdk/bin/gcloud container clusters get-credentials itsmidek8s-cluster-prod --zone us-central1 --project orbital-avatar-378601'
+                            
                             sh '/var/lib/jenkins/google-cloud-sdk/bin/kubectl apply -f nginx-deployment.yaml'
                             sh '/var/lib/jenkins/google-cloud-sdk/bin/kubectl apply -f nginx-service.yaml'
                             sh '/var/lib/jenkins/google-cloud-sdk/bin/git clone https://github.com/microservices-demo/microservices-demo.git'
                             sh '/var/lib/jenkins/google-cloud-sdk/bin/kubectl apply -f microservices-demo/deploy/kubernetes/complete-demo.yaml'
                             sh '/var/lib/jenkins/google-cloud-sdk/bin/kubectl apply -f sock-shop.yaml'
+                            sh '/var/lib/jenkins/google-cloud-sdk/bin/cd microservices-demo/deploy/kubernetes/manifests-monitoring/cp -r. '
+                            sh '/var/lib/jenkins/google-cloud-sdk/bin/kubectl create -f microservices-demo/deploy/kubernetes/manifests-monitoring/00-monitoring-ns.yaml'
                         }
                     }
                 }
