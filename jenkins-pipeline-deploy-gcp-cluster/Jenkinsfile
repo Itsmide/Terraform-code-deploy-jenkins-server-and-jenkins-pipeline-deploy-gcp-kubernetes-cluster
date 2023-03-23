@@ -70,7 +70,6 @@ pipeline {
                             sh '/var/lib/jenkins/google-cloud-sdk/bin/gcloud components update'
                             sh '/var/lib/jenkins/google-cloud-sdk/bin/" gke-gcloud-auth-plugin --impersonate_service_account string"'
                             sh '/var/lib/jenkins/google-cloud-sdk/bin/gcloud container clusters get-credentials itsmidek8s-cluster-prod --zone us-central1 --project orbital-avatar-378601'
-                            
                             sh '/var/lib/jenkins/google-cloud-sdk/bin/kubectl apply -f nginx-deployment.yaml'
                             sh '/var/lib/jenkins/google-cloud-sdk/bin/kubectl apply -f nginx-service.yaml'
                             sh '/var/lib/jenkins/google-cloud-sdk/bin/git clone https://github.com/microservices-demo/microservices-demo.git'
