@@ -9,7 +9,7 @@ pipeline {
         TOKEN = "/var/lib/jenkins/google-cloud-sdk/bin/.kube/gke_gcloud_auth_plugin_cache"
     }
     stages {
-        stage("Install Kubectl") {
+        /*stage("Install Kubectl") {
             steps {
                 sh """
                 export PATH="$PATH:/var/lib/jenkins/google-cloud-sdk/bin/"
@@ -19,7 +19,7 @@ pipeline {
                 source ~/.bashrc
                 """
             }
-        }
+        }*/
         stage('Install Google Cloud SDK') {
             steps {
                 sh 'curl https://sdk.cloud.google.com | bash'
@@ -66,7 +66,7 @@ pipeline {
                         withCredentials([file(credentialsId: 'gcp-service-account', variable: 'GOOGLE_CREDENTIALS')]) {
                             sh 'export PATH="$PATH:/var/lib/jenkins/google-cloud-sdk/bin/"'
                             sh '/var/lib/jenkins/google-cloud-sdk/bin/gcloud auth activate-service-account --key-file=$GOOGLE_CREDENTIALS'
-                            sh '/var/lib/jenkins/google-cloud-sdk/bin/" gke-gcloud-auth-plugin --impersonate_service_account string"'
+                            //sh '/var/lib/jenkins/google-cloud-sdk/bin/" gke-gcloud-auth-plugin --impersonate_service_account string"'
                             sh '/var/lib/jenkins/google-cloud-sdk/bin/gcloud container clusters get-credentials itsmidek8s-cluster-prod --region us-central1 --project orbital-avatar-378601'
                             sh '/var/lib/jenkins/google-cloud-sdk/bin/kubectl apply -f nginx-deployment.yaml'
                             sh '/var/lib/jenkins/google-cloud-sdk/bin/kubectl apply -f nginx-service.yaml'
@@ -75,9 +75,9 @@ pipeline {
                             sh '/var/lib/jenkins/google-cloud-sdk/bin/kubectl apply -f sock-shop.yaml'
                             sh '/var/lib/jenkins/google-cloud-sdk/bin/cd microservices-demo/deploy/kubernetes/manifests-monitoring/'
                             sh '/var/lib/jenkins/google-cloud-sdk/bin/kubectl create -f 00-monitoring-ns.yaml'
-                            sh 'kubectl apply $(ls *-prometheus-*.yaml | awk ' { print " -f " $1 } ')'
-                            sh 'kubectl apply $(ls *-grafana-*.yaml | awk ' { print " -f " $1 }'  | grep -v grafana-import)'
-                            sh 'kubectl apply -f 23-grafana-import-dash-batch.yaml'
+                            sh '/var/lib/jenkins/google-cloud-sdk/bin/kubectl apply $(ls *-prometheus-*.yaml | awk ' { print " -f " $1 } ')'
+                            sh '/var/lib/jenkins/google-cloud-sdk/bin/kubectl apply $(ls *-grafana-*.yaml | awk ' { print " -f " $1 }'  | grep -v grafana-import)'
+                            sh '/var/lib/jenkins/google-cloud-sdk/bin/kubectl apply -f 23-grafana-import-dash-batch.yaml'
                         }
                     }
                 }
