@@ -9,17 +9,6 @@ pipeline {
         TOKEN = "/var/lib/jenkins/google-cloud-sdk/bin/.kube/gke_gcloud_auth_plugin_cache"
     }
     stages {
-        /*stage("Install Kubectl") {
-            steps {
-                sh """
-                export PATH="$PATH:/var/lib/jenkins/google-cloud-sdk/bin/"
-                curl https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/amd64/kubectl -o ~/kubectl
-                chmod +x ~/kubectl
-                echo 'export PATH="$HOME/bin:$PATH"' >> ~/.bashrc
-                source ~/.bashrc
-                """
-            }
-        }*/
         stage('Install Google Cloud SDK') {
             steps {
                 sh 'curl https://sdk.cloud.google.com | bash'
