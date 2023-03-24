@@ -23,4 +23,4 @@
 ## 2. Once completed, access the Jenkins server and Set it up
 ## 3. Run the jenkins-pipeline-deploy-to-gcp to create Kubernetes Cluster, create deployments and Services
 ## 4. Test that the application is running 
-## 5. Destroy infrastructure
+## 5. Then, when all is running. In the root directory of this folder, use terraform to run final-terraform.tf to assign subdomain to their respective IP address.
