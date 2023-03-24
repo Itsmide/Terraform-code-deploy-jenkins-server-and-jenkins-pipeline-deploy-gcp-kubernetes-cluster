@@ -83,8 +83,8 @@ module "gke" {
   ]
 }
     
-resource "google_dns_managed_zone" "apps" {
-  name        = "apps"
-  dns_name    = "itsmidealtschoolexamproject.live."
-  description = " "
+resource "google_dns_managed_zone" "Itsmide" {
+  project   = var.project_id
+  name         = "itsmide-app"
+  dns_name     = "itsmidealtschoolexamproject.live."
 }
