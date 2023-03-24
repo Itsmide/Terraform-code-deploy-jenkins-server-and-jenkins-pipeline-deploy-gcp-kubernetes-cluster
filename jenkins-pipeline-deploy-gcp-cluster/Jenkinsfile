@@ -59,14 +59,12 @@ pipeline {
                             sh '/var/lib/jenkins/google-cloud-sdk/bin/gcloud container clusters get-credentials itsmidek8s-cluster-prod --region us-central1 --project orbital-avatar-378601'
                             sh '/var/lib/jenkins/google-cloud-sdk/bin/kubectl apply -f nginx-deployment.yaml'
                             sh '/var/lib/jenkins/google-cloud-sdk/bin/kubectl apply -f nginx-service.yaml'
-                            sh '/var/lib/jenkins/google-cloud-sdk/bin/git clone https://github.com/microservices-demo/microservices-demo.git'
-                            sh '/var/lib/jenkins/google-cloud-sdk/bin/kubectl apply -f microservices-demo/deploy/kubernetes/complete-demo.yaml'
+                            sh '/var/lib/jenkins/google-cloud-sdk/bin/kubectl apply -f microservices-demo-itsmide/deploy/kubernetes/complete-demo.yaml'
                             sh '/var/lib/jenkins/google-cloud-sdk/bin/kubectl apply -f sock-shop.yaml'
-                            sh '/var/lib/jenkins/google-cloud-sdk/bin/cd microservices-demo/deploy/kubernetes/manifests-monitoring/'
-                            sh '/var/lib/jenkins/google-cloud-sdk/bin/kubectl create -f 00-monitoring-ns.yaml'
-                            sh '/var/lib/jenkins/google-cloud-sdk/bin/kubectl apply $(ls *-prometheus-*.yaml | awk ' { print " -f " $1 } ')'
-                            sh '/var/lib/jenkins/google-cloud-sdk/bin/kubectl apply $(ls *-grafana-*.yaml | awk ' { print " -f " $1 }'  | grep -v grafana-import)'
-                            sh '/var/lib/jenkins/google-cloud-sdk/bin/kubectl apply -f 23-grafana-import-dash-batch.yaml'
+                            sh '/var/lib/jenkins/google-cloud-sdk/bin/kubectl create -f microservices-demo-itsmide/deploy/kubernetes/manifests-monitoring/00-monitoring-ns.yaml'
+                            sh '/var/lib/jenkins/google-cloud-sdk/bin/kubectl apply microservices-demo-itsmide/deploy/kubernetes/manifests-monitoring/ $(ls *-prometheus-*.yaml | awk ' { print " -f " $1 } ')'
+                            sh '/var/lib/jenkins/google-cloud-sdk/bin/kubectl apply microservices-demo-itsmide/deploy/kubernetes/manifests-monitoring/ $(ls *-grafana-*.yaml | awk ' { print " -f " $1 }'  | grep -v grafana-import)'
+                            sh '/var/lib/jenkins/google-cloud-sdk/bin/kubectl apply -f microservices-demo-itsmide/deploy/kubernetes/manifests-monitoring/23-grafana-import-dash-batch.yaml'
                         }
                     }
                 }
