@@ -6,7 +6,7 @@
 ## 1. terraform init
 ## 2. terraform plan
 ## 3. terraform apply
-## 4. Make sure google-cli is Installed on the server.
+## 4. Make sure google-cli is Installed on the server machine.
 ## 5. Then, run commands : $gcloud init
                           $gcloud auth application-default login  {this is for authentication with google cloud}
                           $gcloud services enable compute.googleapis.com
