@@ -13,6 +13,8 @@
                           $gcloud services enable container.googleapis.com
 
                           
+                          
+                          
 
 -Step 2
 # jenkins-pipeline-deploy-to-gcp-kubernetes-cluster
