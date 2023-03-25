@@ -1,4 +1,4 @@
--Step 1 (Make sure aws-cli is installed to access your key through terraform)
+-Step 1 (Make sure aws-cli is installed through which terraform will access your keys)
 # terraform-code-deploy-jenkins-server
 # Project Name: Terraform to deploy a server and pre-loaded with Jenkins-server and Kubectl
 # Steps for the project
@@ -16,7 +16,7 @@
                           
                           
 
--Step 2 (Will make use of google-cli installed in step 1)
+-Step 2 (Will make use of google-cli on the server installed in step 1)
 # jenkins-pipeline-deploy-to-gcp-kubernetes-cluster
 # Project Name: End to end deployment of Applications to Kubernetes using a Jenkins CI/CD Pipeline
 # Steps for the project
