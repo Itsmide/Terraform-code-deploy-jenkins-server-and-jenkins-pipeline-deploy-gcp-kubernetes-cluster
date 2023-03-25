@@ -3,15 +3,15 @@
 # Project Name: Terraform to deploy a server and pre-loaded with Jenkins-server and Kubectl
 # Steps for the project
 
-## 1. Make sure google-cli is Installed.
-## 2. Then run commands : $gcloud init
+## 1. terraform init
+## 2. terraform plan
+## 3. terraform apply
+## 4. Make sure google-cli is Installed on the server.
+## 5. Then, run commands : $gcloud init
                           $gcloud auth application-default login  {this is for authentication with google cloud}
                           $gcloud services enable compute.googleapis.com
                           $gcloud services enable container.googleapis.com
 
-## 3. terraform init
-## 4. terraform plan
-## 5. terraform apply
                           
 
 -Step 2
